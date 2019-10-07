@@ -1,0 +1,196 @@
+练习2.23：不能，如果指针初始化，则指针所在的内存空间的内容将被看做一个地址值，如果所占的内存空间中恰好有内容，而这些内容又被当作某个地址，我们就很难分清清是否合法。
+练习2.24：因为void *是一种特殊的指针，可用于放置任意对象的地址，因此可将int型对象i的地址赋值给避免指针，但不能将int型对象的地址赋给给长型指针。
+练习2.25：  a：ip为int型指针，i为int型变量，r为int型引用   b：i为int型变量，ip为空指针  c：ip为int型指针，ip2为int型变量
+练习2.35：j为const int ；&k为const int & ；*p 为const int * ；j2为const int ；&k2为const int &
+练习3.4：
+①较大：
+#include<iostream>
+#include<string>
+using namespace std;
+int main(){
+    string s1,s2;
+    cin>>s1>>s2;
+    if(s1==s2)
+    	cout<<"yes"<<endl;
+    else if(s1>s2)
+    	cout<<s1<<endl;
+    else
+    	cout<<s2<<endl;
+    return 0;
+}
+②较长：
+#include<iostream>
+#include<string>
+using namespace std;
+int main(){
+    string s1,s2;
+    cin>>s1>>s2;
+    if(s1.size()==s2.size())
+    	cout<<"yes"<<endl;
+    else if(s1.size()>s2.size())
+    	cout<<s1<<endl;
+    else
+    	cout<<s2<<endl;
+    return 0;
+}
+练习3.5：
+1：
+#include<iostream>
+#include<string>
+using namespace std;
+int main(){
+    string s1,s2;
+    while(getline(cin,s2)){
+    	s1 += s2; 
+    	cout<< s1 << endl;
+    }
+    return 0;
+}
+2：
+#include<iostream>
+#include<string>
+using namespace std;
+int main(){
+    string s1,s2;
+    while(getline(cin,s2)){
+    	s1 = s1 + s2 + ' '; 
+    	cout<< s1 << endl;
+    }
+    return 0;
+}
+练习3.20：
+1：
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+int main(){
+    vector<int> vec;
+    int a[10],sum[9];
+    for(int i=0;i<10;i++)
+    	cin>>a[i];
+    for(int i=0;i<10;i++)
+    	vec.push_back(a[i]);
+    for(int i=0;i<9;i++){
+    	sum[i]=vec[i]+vec[i+1];
+        cout<<sum[i]<<' ';
+    }
+    return 0;
+}
+2：
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+int main(){
+    vector<int> vec;
+    int a[10],sum[9];
+    for(int i=0;i<10;i++)
+    	cin>>a[i];
+    for(int i=0;i<10;i++)
+    	vec.push_back(a[i]);
+    for(int i=0;i<5;i++){
+    	sum[i]=vec[i]+vec[9-i];
+        cout<<sum[i]<<' ';
+    }
+    return 0;
+}
+练习3.23：
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+int main(){	
+	vector<int> vec(10,233);
+	for (auto it=vec.begin(); it!=vec.end();it++){
+		*it *=2;
+		cout<<*it<<' ';	
+	}
+	return 0;
+} 
+练习6.10：
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+void exchange(int &p1, int &p2){
+	int a;
+	a=p1;
+	p1=p2;
+	p2=a;
+}
+int main(){	
+	int val1,val2;
+	cin>>val1>>val2;
+	exchange(val1,val2);
+	cout<<val1<<' '<<val2<<endl;
+	return 0;
+} 
+练习6.19：
+a:不合法，calc中只有一个参数，但输入了两个参数      b,c,d合法
+练习6.39：a:非法，const为顶层，函数无法区分 b:非法，忽略返回类型不同 c:重置double类型指针对应变量的值，返回double型指针
+练习7.16：一个类对访问说明符出现的次数和位置并没有严格的限定。构造函数和接口函数定义在public之后，而数据成员和部分成员函数定义在private后面。
+练习7.27：
+#include <iostream>
+#include <string>
+#include<vector>
+using namespace std;
+class Screen{
+public:
+    using pos = std::string::size_type;
+
+    Screen() = default;
+    Screen(pos wd, pos ht) : width(wd), height(ht), contents(ht*wd, ' ') {}
+    Screen(pos wd, pos ht, char c) : width(wd), height(ht), contents(ht*wd, c) {}
+
+    char get() const { return contents[cursor]; }
+    char get(pos r, pos c) const;
+    Screen &set(char);
+    Screen &set(pos, pos, char);
+    Screen &move(pos r, pos c);
+    const Screen& display(ostream& os) const;
+    Screen& display(ostream& os);
+private:
+    pos cursor = 0;
+    pos height = 0, width = 0;
+    string contents;
+
+    void do_display(ostream& os) const { os << contents; }
+};
+
+inline Screen& Screen::move(pos r, pos c){
+    pos row = r * width;
+    cursor = row + c;
+    return *this;
+}
+
+inline Screen& Screen::set(char ch){
+    contents[cursor] = ch;
+    return *this;
+}
+
+inline Screen& Screen::set(pos r, pos col, char ch){
+    pos row = r *width;
+    contents[row+col] = ch;
+    return *this;
+}
+
+Screen& Screen::display(ostream& os){
+    do_display(os);
+    return *this;
+}
+
+const Screen& Screen::display(ostream& os) const{
+    do_display(os);
+    return *this;
+}
+void test727(){
+    Screen myScreen (5, 5, 'x');
+    myScreen.move(4, 0).set('#').display(cout);
+    cout << endl;
+    myScreen.display(cout);
+}
+练习7.49：a:合法  b:不合法，Salesdata&类型与Salesdata类型之间不可转换  c:不合法，const不对，因为combine本身是需要改变传入参数的
+练习7.58：
+static double rate = 6.5;   静态成员类内初始化应该是一个const表达式。
+static vector<double> vec(vecSize);  vector不需要在类内就定义大小。
